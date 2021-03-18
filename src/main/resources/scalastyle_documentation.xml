@@ -1083,4 +1083,15 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
    ]]>
   </example-configuration>
  </check>
+
+ <check id="spaces.after.colon">
+  <justification>
+   The Scala Style Guide says to have a space between the colon and the parameter type.
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ColonSpaceChecker enabled="true"/>
+   ]]>
+  </example-configuration>
+ </check>
 </scalastyle-documentation>

@@ -23,8 +23,8 @@ import org.scalastyle.ScalastyleError
 import _root_.scalariform.lexer.Tokens.{DEF, LBRACKET, NEWLINE, PLUS}
 import _root_.scalariform.parser.{CompilationUnit, InfixExpr, ParamClauses}
 
-class SpacesAfterParameterInMethodChecker extends ScalariformChecker {
-  val errorKey = "spaces.after.plus"
+class ColonSpaceChecker extends ScalariformChecker {
+  val errorKey = "spaces.after.colon"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {

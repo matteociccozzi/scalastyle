@@ -32,13 +32,13 @@ class SpacesAfterPlusChecker extends ScalariformChecker {
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
-      t <- localVisit(ast.immediateChildren(0))
+      t <- localVisit(ast.immediateChildren.head)
       if isInvalidPlusInfix(t)
     } yield {
       PositionError(t.infixId.offset)
     }
 
-    it.toList
+    it
   }
 
   private def isInvalidPlusInfix(infix: InfixExpr): Boolean = {

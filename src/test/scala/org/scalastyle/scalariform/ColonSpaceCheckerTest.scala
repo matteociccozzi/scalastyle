@@ -22,9 +22,9 @@ import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number
 
-class SpacesAfterParameterInMethodsCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "spaces.after.plus"
-  val classUnderTest = classOf[SpacesAfterParameterInMethodChecker]
+class ColonSpaceCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "spaces.after.colon"
+  val classUnderTest = classOf[ColonSpaceChecker]
 
   @Test def testOneParamNoSpace(): Unit = {
     val source = """
