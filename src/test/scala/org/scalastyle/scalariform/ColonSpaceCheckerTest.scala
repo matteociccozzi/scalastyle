@@ -42,7 +42,7 @@ class ColonSpaceCheckerTest extends AssertionsForJUnit with CheckerTest {
       }
     """
 
-    assertErrors(List(columnError(2, 18)), source)
+    assertErrors(List(columnError(2, 24)), source)
   }
 
   @Test def testOneFunctionOneParamTwoSpaces(): Unit = {
@@ -53,7 +53,7 @@ class ColonSpaceCheckerTest extends AssertionsForJUnit with CheckerTest {
       }
     """
 
-    assertErrors(List(columnError(2, 20)), source)
+    assertErrors(List(columnError(2, 26)), source)
   }
 
   @Test def testOneFunctionOneParamOK(): Unit = {
@@ -77,7 +77,7 @@ class ColonSpaceCheckerTest extends AssertionsForJUnit with CheckerTest {
       println("hello")
     }
     """
-    assertErrors(List(columnError(2, 16), columnError(6, 16)), source)
+    assertErrors(List(columnError(2, 20), columnError(6, 20)), source)
   }
 
   @Test def testOneFunctionMultipleParams(): Unit = {
@@ -88,9 +88,9 @@ class ColonSpaceCheckerTest extends AssertionsForJUnit with CheckerTest {
     }
     """
     assertErrors(List(
-      columnError(2, 16),
-      columnError(2, 31),
-      columnError(2,45)
+      columnError(2, 20),
+      columnError(2, 35),
+      columnError(2,49)
     ), source)
   }
 }
