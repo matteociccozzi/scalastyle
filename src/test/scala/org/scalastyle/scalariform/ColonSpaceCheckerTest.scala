@@ -26,33 +26,68 @@ class ColonSpaceCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "spaces.after.colon"
   val classUnderTest = classOf[ColonSpaceChecker]
 
-  @Test def testOneParamNoSpace(): Unit = {
+  @Test def testOneFunctionNoParamsOk(): Unit = {
+    val source =
+      """
+def foobar(): Unit = {
+  println("hello")
+}
+"""
+    assertErrors(List(), source)
+  }
+
+  @Test def testOneFunctionOneParamNoSpace(): Unit = {
     val source = """
 def foobar(param1:String): Unit = {
   println("hello")
 }
 """
 
-    assertErrors(List(columnError(2, 17)), source)
+    assertErrors(List(columnError(2, 18)), source)
   }
 
-  @Test def testOneParamTwoSpaces(): Unit = {
+  @Test def testOneFunctionOneParamTwoSpaces(): Unit = {
     val source = """
 def foobar(param1:  String): Unit = {
   println("hello")
 }
 """
 
-    assertErrors(List(columnError(2, 17)), source)
+    assertErrors(List(columnError(2, 20)), source)
   }
 
-  @Test def testOneParamOK(): Unit = {
+  @Test def testOneFunctionOneParamOK(): Unit = {
     val source = """
 def foobar(param1: String): Unit = {
   println("hello")
 }
 """
-
     assertErrors(List(), source)
+  }
+
+  @Test def testTwoFunctionsOneParam(): Unit = {
+    val source = """
+def foo1(param1:String): Unit = {
+  println("hello")
+}
+
+def foo2(param2:String): Unit = {
+  println("hello")
+}
+"""
+    assertErrors(List(columnError(2, 16), columnError(6, 16)), source)
+  }
+
+  @Test def testOneFunctionMultipleParams(): Unit = {
+    val source = """
+def foo1(param1:String, param2:Int, param3:  String): Unit = {
+  println("hello")
+}
+"""
+    assertErrors(List(
+      columnError(2, 16),
+      columnError(2, 31),
+      columnError(2,45)
+    ), source)
   }
 }

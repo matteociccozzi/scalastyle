@@ -20,28 +20,53 @@ import org.scalastyle.scalariform.VisitorHelper.visit
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-import _root_.scalariform.lexer.Tokens.{DEF, LBRACKET, NEWLINE, PLUS}
-import _root_.scalariform.parser.{CompilationUnit, InfixExpr, ParamClauses}
+import _root_.scalariform.parser.{CompilationUnit, Param, ParamClauses}
 
 class ColonSpaceChecker extends ScalariformChecker {
   val errorKey = "spaces.after.colon"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for {
-      t <- localVisit(ast.immediateChildren(0))
-      if hasInvalidParamSpacing(t)
-    } yield {
-      PositionError(t.paramClausesAndNewlines.head._1.firstParamOption.get.paramTypeOpt.get._1.offset)
-    }
+    val paramClauses = localVisit(ast.immediateChildren.head)
+    val paramSpacingInvalidChecks = paramClauses.map(hasInvalidSpacingInFuncDef)
 
-    it.toList
+    paramSpacingInvalidChecks.flatMap { paramsCheck =>
+      paramsCheck.flatMap { paramCheck =>
+        val paramIsInvalid = paramCheck._1
+
+        if (paramIsInvalid) {
+          Option(PositionError(paramCheck._2))
+        } else {
+          None
+        }
+      }
+    }
   }
 
-  private def hasInvalidParamSpacing(expr: ParamClauses): Boolean = {
+  private def hasInvalidSpacingInFuncDef(expr: ParamClauses): List[(Boolean, Int)] = {
     val functionDefParamClause = expr.paramClausesAndNewlines.head._1
-    val firstParam = functionDefParamClause.firstParamOption.get
-    val colonOffset = firstParam.paramTypeOpt.get._1.offset
-    val actualParamTypeOffset = firstParam.paramTypeOpt.get._2.tokens(0).offset
+    val firstParam = functionDefParamClause.firstParamOption
+
+    firstParam match {
+      case None =>
+        List() // No first parameter means nothing to check
+      case _ =>
+        val remainingParams = functionDefParamClause.otherParams
+        val allParams = List(firstParam.get) ++ remainingParams.map(_._2)
+
+        allParams.map({ param =>
+          if (paramHasInvalidSpacing(param)){
+            val errorOffset = param.paramTypeOpt.get._2.tokens.head.offset
+            (true, errorOffset)
+          } else {
+            (false, -1)
+          }
+        })
+    }
+  }
+
+  private def paramHasInvalidSpacing(param: Param): Boolean = {
+    val colonOffset = param.paramTypeOpt.get._1.offset
+    val actualParamTypeOffset = param.paramTypeOpt.get._2.tokens.head.offset
     val expectedParamTypeOffset = colonOffset + 2 // One for the space and once for the first char of the type
 
     actualParamTypeOffset != expectedParamTypeOffset
